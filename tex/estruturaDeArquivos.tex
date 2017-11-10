@@ -1,0 +1,112 @@
+%%%%%%%%%%%%%%%%%%%%%
+%% Estrutura de Arquivos %%
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introdução}
+Neste capítulo, é explicado como os arquivos do projeto são separados e organizados. É importante saber que para o desenvolvimento do SAEC utilizamos um Framework para PHP chamado Zend Framework, o que influenciou em algumas decisões quanto à estrutura dos arquivos.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{./application}
+No diretório \textit{./application} está contida a maior parte do projeto, que são os \textit{modules}, juntamente com alguns outros arquivos.
+
+\subsection{Modules}
+Existem 7 \textit{modules}:
+    \begin{itemize}
+        \item admin
+        \item oper
+        \item default
+        \item common
+        \item db
+        \item cron
+        \item auth
+    \end{itemize}
+
+Nos \textit{modules} \textbf{admin}, \textbf{oper} e \textbf{default} estão as funcionalidades exclusivas de cada tipo de usuário, administrador, operador e usuário comum, respectivamente. Em \textbf{common}, estão funcionalidades que são comuns à mais de um tipo de usuário. Em cada um desses quatro, existem \textit{Controllers}, \textit{Forms} e \textit{Views}, que serão explicados no final deste capítulo.
+
+No \textit{module} \textbf{db}, encontram-se os arquivos referentes ao banco de dados. Tanto scripts de criação e deleção do banco de dados, como \textit{DbTables} e \textit{Mappers}. Em \textbf{cron}, estão funcionalidades que podem ser executadas automaticamente pelo \textit{cron}. O \textbf{auth} é exclusivo para as ferramentas de autenticação de usuário.
+
+\subsection{Configs}
+Dentro deste diretório, existem apenas 2 arquivos. No \textit{local.ini} estão as configurações locais para o banco de dados, e no \textit{application.ini} algumas outras configurações do projeto.
+
+\subsection{Languages}
+Em \textit{languages}, estão os arquivos de traduções. Existe um arquivo \textit{.mo} ilegível para cada idioma suportado pelo sistema, que é gerado automaticamente a partir do arquivo \textit{.po} do idioma. O arquivo \textit{.po}, que é o que pode ser editado para que a tradução de uma nova frase seja incluída no sistema, contém mensagens no seguinte formato:
+
+\begin{lstlisting}
+    msgid "hello_world"
+    msgstr "Hello, world!"
+\end{lstlisting}
+
+Em \textit{msgid} fica um identificador para cada mensagem, e em \textit{msgstr} a mensagem no idioma escolhido. Por convenção, no SAEC utilizamos como id da mensagem a própria mensagem, em inglês. Para gerar os novos arquivos \textit{.mo} após modificar os \textit{.po}, o script \textit{convertpten.sh} deve ser executado.
+
+\subsection{Layouts}
+Em \textit{layouts} encontra-se um arquivo \textit{.phtml} que define o \textit{layout} comum à todas as páginas da aplicação e um arquivo \textit{.xml} que contém os links dos dropdowns da barra de menus do sistema.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{./library}
+Neste diretório encontram-se bibliotecas utilizadas no projeto. Existem arquivos do Zend Framework e do PHP5LibcryptoSec, além de alguns que foram separados para formar uma biblioteca própria do SAEC.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{./public}
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{./scripts}
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{./tests}
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Fluxo de Execução de uma Funcionalidade}
+Para entender como funciona o fluxo de execução, podemos exemplificar com uma simples funcionalidade que acesse o banco de dados, como por exemplo, criar um usuário.
+
+\subsection{Componentes Principais}
+
+Cada funcionalidade deste tipo possui diversos componentes:
+    \begin{itemize}
+        \item Controller
+        \item Form
+        \item View
+        \item DbTable
+        \item Mapper
+        \item Model
+    \end{itemize}
+
+Podemos considerar o \textbf{controller} como o principal componente da estrutura. Levando em conta nosso exemplo, encontraríamos nele algum método com o nome \textit{createuserAction}. Neste método instanciamos o \textbf{form}, que contém o formulário que deve ser apresentado ao usuário quando este acessar a página de criar um usuário. A \textbf{view} estará automaticamente ligada com o \textbf{controller} se o nome do arquivo for \textit{createuser.phtml}, por causa do \textit{Zend Framework}. Ela possui o \textit{HTML}, \textit{CSS}, \textit{JavaScript} e até mesmo alguns trechos em \textit{PHP} que formam a página \textit{web} que será mostrada ao usuário. Para que a \textbf{view} possa utilizar o \textbf{form}, no \textbf{controller} escrevemos a seguinte linha de código:
+
+\begin{lstlisting}[language=php]
+    $this->view->viewForm = $controllerForm
+\end{lstlisting}
+
+Onde \textit{\$controllerForm} é a instância criada, e \textit{viewForm} é a variável da \textbf{view} que armazenará a instância do \textbf{form}.
+
+A \textbf{DbTable} é basicamente um arquivo que define como é a tabela presente no banco de dados, contendo informações sobre as colunas e chaves da tabela. Ela é utilizada pelo \textbf{Mapper}, que contém métodos para executar consultas no banco de dados. Muitos deles utilizam funções prontas que o \textit{Zend Framework} disponibiliza, outros possuem \textit{queries} \textit{SQL}. Para que objetos que representam linhas do BD sejam transportados entre o \textbf{mapper} e \textbf{controller} de uma forma mais organizada, existe o \textbf{model}, que é uma classe simples, com atributos que representam cada coluna da tabela no BD e \textit{getters} e \textit{setters}.
+
+Quando o formulário é submetido pelo usuário, o \textbf{controller} analisa as informações enviadas e faz as alterações necessárias no BD utilizando os métodos disponibilizados pelo \textbf{mapper}.
+
+Cada action pode ser acessada no navegador através do link \textit{link/module/controller/action}, como por exemplo \textit{https://localhost:40444/admin/user/createuser} para a action \textit{createuserAction}, do controller \textit{userController}, do module \textit{admin}.
+
+\subsection{Arquivos Importantes}
+
+Além deles, não se pode esquecer de alguns arquivos que também possuem informações sobre cada funcionalidade:
+    \begin{itemize}
+        \item Script de criação do BD
+        \item navigation.xml 
+        \item Acl
+    \end{itemize}
+
+No script de criação do BD (\textit{./application/modules/db/sql/createDatabase.sql}) estará o \textit{SQL} responsável por criar cada tabela, e deve ser consultado/alterado quando necessário.
+
+Em \textit{./application/layouts/scripts/navigation.xml} estão os links dos menus, e deve ser alterado para adicionar links para as novas funcionalidades.
+
+Já a \textbf{Acl} (\textit{./library/SAEC/Acl.php}) é quem controla qual tipo de usuário tem acesso a cada página. Ela deve ser sempre alterada quando uma nova funcionalidade é criada, para que o usuário à quem ela for destinada tenha permissão de acesso.
+
+
+

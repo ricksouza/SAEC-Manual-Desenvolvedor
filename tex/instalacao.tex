@@ -1,0 +1,103 @@
+%%%%%%%%%%%%%%%%%%%%%
+%% Instalação %%
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introdução}
+Esta seção tem como objetivo mostrar, passo a passo, como é feita a instalação e configuração do ambiente de desenvolvimento do SAEC. Deve-se levar em consideração que este documento foi produzido com base na instalação da versão 2.3 do SAEC, em um Ubuntu 14.04 de 64 bits.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Repositório}
+O código da aplicação encontra-se no GitLab do LabSEC e para acessá-lo é necessário possuir cadastro. É preciso também criar uma chave SSH e adicioná-la ao git, para que seja possível fazer o download do código da aplicação e realizar commits.
+
+\subsection{Cadastro no GitLab LabSEC}
+TODO
+
+\subsection{Chave SSH}
+O link abaixo deve ser utilizado para adicionar chaves SSH à sua conta do GitLab e verificar as que já foram adicionadas.
+
+\begin{lstlisting}
+    https://gitlab.labsec.ufsc.br/profile/keys
+\end{lstlisting}
+
+Para criar uma chave, o comando a seguir deve ser utilizado, com o seu email utilizado no GitLab.
+
+\begin{lstlisting}[language=bash]
+    $ ssh-keygen -t rsa -C "your.email@example.com" -b 4096
+\end{lstlisting}
+
+Recomenda-se utilizar o diretório padrão para salvar a chave (pressionando \textit{enter} quando o caminho for solicitado), e uma senha de sua escolha. Com a chave gerada, deve-se adicioná-la ao GitLab. Para imprimir a chave no terminal e copiá-la com \textit{Ctrl+Shift+C}, utilize o comando:
+
+\begin{lstlisting}[language=bash]
+    $ cat ~/.ssh/id_rsa.pub
+\end{lstlisting}
+
+\subsection{Download do Código}
+Para baixar o código da aplicação e contribuir para o desenvolvimento da aplicação, é necessário fazer o download do \textit{git}.
+
+\begin{lstlisting}[language=bash]
+	$ sudo apt-get install git
+\end{lstlisting}
+
+No diretório de sua escolha, clone o repositório. Será criada uma pasta \textit{code}, que pode ser renomeada, com o código presente na branch \textit{master} do repositório.
+
+\begin{lstlisting}[language=bash]
+	$ git clone git@gitlab.labsec.ufsc.br:saec/code.git
+\end{lstlisting}
+
+Para fazer checkout do branch \textit{dev}, os seguintes comandos devem ser utilizados dentro da pasta onde o código está presente:
+
+\begin{lstlisting}[language=bash]
+	$ git fetch
+	$ git checkout -b dev origin/dev
+\end{lstlisting}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Instalando Dependências}
+Algumas dependências precisam ser instaladas para que seja possível utilizar o SAEC.
+
+\begin{lstlisting}[language=bash]
+	$ sudo apt-get install postgresql
+	$ sudo apt-get install php5 php5-sqlite php5-ldap
+	$ sudo apt-get install php5-mcrypt php5-dev php5-pgsql
+	$ sudo apt-get install libapache2-mod-shib2
+	$ sudo apt-get install libapache2-modsecurity
+	$ sudo apt-get install libp11-dev
+\end{lstlisting}
+
+Deve-se, também, habilitar módulos do apache e do php.
+
+\begin{lstlisting}
+        $ sudo a2enmod ssl
+        $ sudo a2enmod shib2
+        $ sudo a2enmod rewrite
+        $ sudo a2enmod headers
+        $ sudo php5enmod mcrypt
+\end{lstlisting}
+
+TODO: ibcryptosec!
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Gerando Chave do Servidor HTTPS}
+
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Configurando o Banco de Dados}
+
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Apache Virtual Host}
+
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Testando Instalação}
+
+TODO

@@ -1,0 +1,29 @@
+%%%%%%%%%%%%%%%%%%%%%
+%% Desenvolvimento %%
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introdução}
+
+Para algumas funcionalidades do SAEC, inclusive a emissão de certificados, é utilizado o Shibboleth para autenticação perante alguma universidade. Quando um usuário solicita alguma dessas funcionalidades, ele é redirecionado para o serviço de WAYF (Where Are You From) para informar qual a sua instituição. Após isso, é redirecionado para uma página de autenticação da sua instituição, que chamamos de IDP (Identity Provider). Feita a autenticação, ele é redirecionado novamente para o SAEC, e os dados da autenticação são salvos em variáveis de sessão.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+\section{Funcionalidades Envolvidas}
+
+As funcionalidades que necessitam autenticação perante instituição podem ser divididas em dois grupos, diferenciando-as quanto à utilização ou não utilização do mapeador de atributos.
+
+As que o utilizam para mapear os dados vindos da IDP são:
+\begin{itemize}
+    \item Emissão de Certificado
+    \item Revogação de Certificado
+    \item Instalação de Certificado
+    \item Validação de Atributos
+\end{itemize}
+
+As que não o utilizam são:
+\begin{itemize}
+        \item Configuração do Mapeador de Atributos
+        \item Pedido de Operador
+\end{itemize}
+
+Após realizada a autenticação perante instituição, o usuário é redirecionado de acordo com o arquivo ./public/signup/index.php. Se a funcionalidade requerida for uma que não utiliza o mapeador de atributos, ele é redirecionado diretamente para a página, se não, para o \textit{SignUpController}, onde os atributos são mapeados de acordo com a configuração salva no banco de dados, e somente após isso acontece o redirecionamento para a página requerida.
